@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="cyberpunk"> <!-- Default theme set to cyberpunk -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PTSD Assessment Results</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* CSS Variables for Theming */
+        :root {
+            --bg-color: #f9f9fb;
+            --text-color: #343a40;
+            --form-bg: #ffffff;
+            --shadow-color: rgba(0, 0, 0, 0.05);
+            --primary-color: #2e9af7;
+            --primary-dark: #1e88e5;
+            --border-color: #e9ecef;
+            --result-bg: #f0f8ff;
+            --error-color: #dc3545;
+            --heading-color: #495057;
+            --normal-color: #28a745;
+            --mild-color: #ffc107;
+            --moderate-color: #fd7e14;
+            --severe-color: #dc3545;
+            --extreme-color: #880e4f;
+        }
+
+        /* Dark Theme */
+        [data-theme="dark"] {
+            --bg-color: #212529;
+            --text-color: #adb5bd;
+            --form-bg: #343a40;
+            --shadow-color: rgba(255, 255, 255, 0.05);
+            --primary-color: #64b5f6;
+            --primary-dark: #90caf9;
+            --border-color: #495057;
+            --result-bg: #424242;
+            --heading-color: #fff;
+        }
+
+        /* Light Theme */
+        [data-theme="light"] {
+            --bg-color: #f9f9fb;
+            --text-color: #343a40;
+            --form-bg: #ffffff;
+            --shadow-color: rgba(0, 0, 0, 0.05);
+            --primary-color: #2e9af7;
+            --primary-dark: #1e88e5;
+            --border-color: #e9ecef;
+            --result-bg: #f0f8ff;
+            --error-color: #dc3545;
+            --heading-color: #495057;
+        }
+
+        /* Cyberpunk Theme (Neon Blue, No Pink or Purple) */
+        [data-theme="cyberpunk"] {
+            --bg-color: #0a0a23; /* Deep dark blue-black */
+            --text-color: #00f2fe; /* Neon cyan */
+            --form-bg: #1a1a3a; /* Slightly lighter dark blue */
+            --shadow-color: rgba(0, 242, 254, 0.2); /* Neon blue shadow */
+            --primary-color: #00c6fb; /* Neon blue */
+            --primary-dark: #0099cc; /* Darker neon blue */
+            --border-color: #003366; /* Deep blue */
+            --result-bg: #1a1a4a; /* Slightly different dark for results */
+            --error-color: #ff4040; /* Bright red error */
+            --heading-color: #00f2fe; /* Neon cyan for headings */
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 30px;
+            position: relative; /* For absolute positioning of theme buttons */
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: var(--heading-color);
+            margin-bottom: 25px;
+            font-weight: 600;
+            line-height: 1.3;
+        }
+
+        .theme-buttons {
+            position: absolute;
+            top: 30px; /* Align with container padding */
+            right: 30px; /* Top right corner */
+            display: flex;
+            gap: 5px; /* Space between buttons */
+        }
+
+        .result {
+            margin-top: 40px;
+            padding: 30px;
+            background-color: var(--result-bg);
+            border-radius: 15px;
+            transition: background-color 0.3s;
+            box-shadow: 0 4px 15px var(--shadow-color);
+        }
+
+        p {
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        button, .button-link {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 8px 16px; /* Same as theme buttons */
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: background-color 0.3s, transform 0.2s;
+            box-shadow: 0 2px 6px var(--shadow-color);
+            display: inline-block; /* For links to behave like buttons */
+            text-decoration: none; /* Remove underline from links */
+            margin-right: 5px; /* Space between buttons */
+        }
+
+        button:hover, .button-link:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        button:active, .button-link:active {
+            transform: translateY(0);
+        }
+
+        .button-container {
+            margin-top: 20px;
+            text-align: center; /* Center the buttons */
+        }
+
+        /* Severity Meter Styles */
+        .severity-meter {
+            width: 100%;
+            height: 20px;
+            background-color: #eee;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .severity-level {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            transition: width 0.5s ease-in-out, background-color 0.3s;
+        }
+
+        .normal {
+            background-color: var(--normal-color);
+        }
+
+        .mild {
+            background-color: var(--mild-color);
+        }
+
+        .moderate {
+            background-color: var(--moderate-color);
+        }
+
+        .severe {
+            background-color: var(--severe-color);
+        }
+
+        .extreme {
+            background-color: var(--extreme-color);
+        }
+
+        .severity-text {
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 20px;
+        }
+
+        /* Recommendation List Styles */
+        .recommendation-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .recommendation-item {
+            margin-bottom: 15px;
+            padding: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            background-color: var(--form-bg);
+            box-shadow: 0 2px 10px var(--shadow-color);
+            transition: background-color 0.3s;
+        }
+
+        a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+
+        a:hover {
+            color: var(--primary-dark);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+                padding: 20px;
+            }
+
+            .theme-buttons {
+                position: static; /* Reset to flow on mobile */
+                text-align: center;
+                margin-top: 10px;
+                margin-bottom: 20px;
+            }
+
+            button, .button-link {
+                padding: 6px 12px;
+                font-size: 0.7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>PTSD Assessment Results</h1>
+        <div class="theme-buttons">
+            <button onclick="changeTheme('light')">Light</button>
+            <button onclick="changeTheme('dark')">Dark</button>
+            <button onclick="changeTheme('cyberpunk')">Cyberpunk</button>
+        </div>
+
+        <div class="result">
+            <div class="severity-text">
+                Predicted PTSD Severity: {{ predicted_severity }} {{ confidence_adjustment }}
+            </div>
+
+            <div class="severity-meter">
+                <div class="severity-level {{ predicted_severity | lower }}" style="width:
+                {% if predicted_severity == 'Normal' %}20%
+                {% elif predicted_severity == 'Mild' %}40%
+                {% elif predicted_severity == 'Moderate' %}60%
+                {% elif predicted_severity == 'Severe' %}80%
+                {% else %}100%{% endif %};"></div>
+            </div>
+
+            <h2>Recommendations</h2>
+            <ul class="recommendation-list">
+                <li class="recommendation-item">{{ llm_response }}</li>
+            </ul>
+        </div>
+
+        <div class="button-container">
+            <a href="{{ url_for('chatbot') }}" class="button-link">Go to Chatbot</a>
+        </div>
+    </div>
+
+    <script>
+        const html = document.documentElement;
+
+        function changeTheme(theme) {
+            html.setAttribute('data-theme', theme);
+        }
+    </script>
+</body>
+</html>

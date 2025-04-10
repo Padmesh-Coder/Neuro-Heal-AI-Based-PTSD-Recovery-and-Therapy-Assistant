@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="cyberpunk"> <!-- Only set data-theme here -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuroHeal AI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* CSS Variables for Theming */
+        :root {
+            --bg-color: #f9f9fb;
+            --text-color: #343a40;
+            --form-bg: #ffffff;
+            --shadow-color: rgba(0, 0, 0, 0.05);
+            --primary-color: #2e9af7;
+            --primary-dark: #1e88e5;
+            --border-color: #e9ecef;
+            --user-msg-bg: #e2f3ff;
+            --bot-msg-bg: #f0f0f0;
+            --input-bg: #ffffff;
+        }
+
+        /* Dark Theme (Default) */
+        [data-theme="dark"] {
+            --bg-color: #1a1a1a;
+            --text-color: #e0e0e0;
+            --form-bg: #333333;
+            --shadow-color: rgba(0, 0, 0, 0.3);
+            --primary-color: #5ac8fa;
+            --primary-dark: #40b3e0;
+            --border-color: #555555;
+            --user-msg-bg: #4a4a4a;
+            --bot-msg-bg: #555555;
+            --input-bg: #444444;
+        }
+
+        /* Cyberpunk Theme (Neon Blue, No Pink or Purple) */
+        [data-theme="cyberpunk"] {
+            --bg-color: #0a0a23; /* Deep dark blue-black */
+            --text-color: #00f2fe; /* Neon cyan */
+            --form-bg: #1a1a3a; /* Slightly lighter dark blue */
+            --shadow-color: rgba(0, 242, 254, 0.2); /* Neon blue shadow */
+            --primary-color: #00c6fb; /* Neon blue */
+            --primary-dark: #0099cc; /* Darker neon blue */
+            --border-color: #003366; /* Deep blue */
+            --user-msg-bg: #1a3a5a; /* Darker blue for user messages */
+            --bot-msg-bg: #1a4a6a; /* Slightly different blue for bot messages */
+            --input-bg: #1a2a4a; /* Dark blue input background */
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            transition: background-color 0.3s, color 0.3s;
+            margin: 0; /* Ensure no default margin interferes */
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 30px;
+            border-radius: 12px;
+            background: var(--form-bg);
+            box-shadow: 0 5px 20px var(--shadow-color);
+            position: relative;
+            transition: background-color 0.3s; /* Ensure container transitions */
+        }
+
+        #chat-container {
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            background-color: var(--input-bg);
+            height: 500px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: background-color 0.3s, border-color 0.3s; /* Add transitions */
+        }
+
+        #chat-messages {
+            height: 400px;
+            overflow-y: auto;
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        .message {
+            padding: 10px 15px;
+            margin: 8px 0;
+            border-radius: 10px;
+            max-width: 75%;
+            word-break: break-word;
+            transition: background-color 0.3s; /* Ensure message backgrounds transition */
+        }
+
+        .user-message { background-color: var(--user-msg-bg); text-align: right; margin-left: auto; }
+        .bot-message { background-color: var(--bot-msg-bg); text-align: left; margin-right: auto; }
+
+        #chat-input-area {
+            display: flex;
+            gap: 10px;
+        }
+
+        #chat-input {
+            flex-grow: 1;
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            transition: background-color 0.3s, border-color 0.3s, color 0.3s; /* Add transitions */
+        }
+
+        #send-button, #record-button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        #send-button:hover, #record-button:hover {
+            background-color: var(--primary-dark);
+        }
+
+        /* Theme Buttons */
+        .theme-buttons {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            display: flex;
+            gap: 5px;
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: background-color 0.3s, transform 0.2s;
+            box-shadow: 0 2px 6px var(--shadow-color);
+        }
+
+        button:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--text-color);
+            margin-bottom: 25px;
+            font-weight: 600;
+            line-height: 1.3;
+            transition: color 0.3s; /* Ensure heading transitions */
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+                padding: 20px;
+            }
+
+            .theme-buttons {
+                position: static;
+                text-align: center;
+                margin-top: 10px;
+                margin-bottom: 20px;
+            }
+
+            button {
+                padding: 6px 12px;
+                font-size: 0.7rem;
+            }
+
+            #chat-container {
+                height: 400px;
+            }
+
+            #chat-messages {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body> <!-- Removed data-theme from body -->
+    <div class="container">
+        <h1>NeuroHeal AI 💙</h1>
+        <div class="theme-buttons">
+            <button onclick="changeTheme('light')">Light</button>
+            <button onclick="changeTheme('dark')">Dark</button>
+            <button onclick="changeTheme('cyberpunk')">Cyberpunk</button>
+        </div>
+        <div id="chat-container">
+            <div id="chat-messages"></div>
+            <div id="chat-input-area">
+                <input type="text" id="chat-input" placeholder="Type your message here...">
+                <button id="send-button">Send</button>
+                <button id="record-button">🎤</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const chatMessages = document.getElementById('chat-messages');
+        const chatInput = document.getElementById('chat-input');
+        const sendButton = document.getElementById('send-button');
+        const recordButton = document.getElementById('record-button');
+        const html = document.documentElement;
+
+        sendButton.addEventListener('click', sendMessage);
+        chatInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
+
+        function sendMessage() {
+            const messageText = chatInput.value.trim();
+            if (!messageText) return;
+            displayMessage(messageText, 'user');
+            chatInput.value = '';
+            fetch('/chatbot', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: 'message=' + encodeURIComponent(messageText),
+            })
+            .then(response => response.json())
+            .then(data => displayMessage(data.response, 'bot'))
+            .catch(() => displayMessage('Error: Could not connect to the bot.', 'bot'));
+        }
+
+        function displayMessage(message, sender) {
+            const msgElement = document.createElement('div');
+            msgElement.classList.add('message', sender + '-message');
+            msgElement.textContent = message;
+            chatMessages.appendChild(msgElement);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        let recognition;
+        recordButton.addEventListener('click', () => {
+            if (!recognition) {
+                recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+                recognition.lang = 'en-US';
+                recognition.interimResults = false;
+                recognition.onresult = (event) => {
+                    const recognizedText = event.results[0][0].transcript;
+                    chatInput.value = recognizedText;
+                    sendMessage();
+                };
+                recognition.onerror = (event) => {
+                    displayMessage('Error with speech recognition: ' + event.error, 'bot');
+                };
+            }
+            recognition.start();
+        });
+
+        // Theme Switching Functionality
+        function changeTheme(theme) {
+            html.setAttribute('data-theme', theme);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="cyberpunk"> <!-- Default theme is still dark -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PTSD Assessment (DASS-21)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* CSS Variables for Theming */
+        :root {
+            --bg-color: #f9f9fb;
+            --text-color: #343a40;
+            --form-bg: #ffffff;
+            --shadow-color: rgba(0, 0, 0, 0.05);
+            --primary-color: #2e9af7;
+            --primary-dark: #1e88e5;
+            --border-color: #e9ecef;
+            --result-bg: #f0f8ff;
+            --error-color: #dc3545;
+            --heading-color: #495057;
+        }
+
+        /* Dark Theme (Default) */
+        [data-theme="dark"] {
+            --bg-color: #212529;
+            --text-color: #adb5bd;
+            --form-bg: #343a40;
+            --shadow-color: rgba(255, 255, 255, 0.05);
+            --primary-color: #64b5f6;
+            --primary-dark: #90caf9;
+            --border-color: #495057;
+            --result-bg: #424242;
+            --error-color: #ff6b6b;
+            --heading-color: #fff;
+        }
+
+        /* Light Theme */
+        [data-theme="light"] {
+            --bg-color: #f9f9fb;
+            --text-color: #343a40;
+            --form-bg: #ffffff;
+            --shadow-color: rgba(0, 0, 0, 0.05);
+            --primary-color: #2e9af7;
+            --primary-dark: #1e88e5;
+            --border-color: #e9ecef;
+            --result-bg: #f0f8ff;
+            --error-color: #dc3545;
+            --heading-color: #495057;
+        }
+
+        /* Cyberpunk Theme (Neon Blue, No Pink or Purple) */
+        [data-theme="cyberpunk"] {
+            --bg-color: #0a0a23; /* Deep dark blue-black */
+            --text-color: #00f2fe; /* Neon cyan */
+            --form-bg: #1a1a3a; /* Slightly lighter dark blue */
+            --shadow-color: rgba(0, 242, 254, 0.2); /* Neon blue shadow */
+            --primary-color: #00c6fb; /* Neon blue */
+            --primary-dark: #0099cc; /* Darker neon blue */
+            --border-color: #003366; /* Deep blue */
+            --result-bg: #1a1a4a; /* Slightly different dark for results */
+            --error-color: #ff4040; /* Bright red error */
+            --heading-color: #00f2fe; /* Neon cyan for headings */
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 30px;
+            position: relative; /* For absolute positioning of theme buttons */
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: var(--heading-color);
+            margin-bottom: 25px;
+            font-weight: 600;
+            line-height: 1.3;
+        }
+
+        .theme-buttons {
+            position: absolute;
+            top: 30px; /* Align with container padding */
+            right: 30px; /* Definitely top right corner */
+            display: flex;
+            gap: 5px; /* Space between buttons */
+        }
+
+        form {
+            background-color: var(--form-bg);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px var(--shadow-color);
+            margin-bottom: 40px;
+            transition: background-color 0.3s;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 12px;
+            color: var(--text-color);
+            font-weight: 500;
+            font-size: 1.1rem;
+        }
+
+        input[type="number"],
+        select,
+        input[type="text"] {
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 25px;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            box-sizing: border-box;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: border-color 0.3s, background-color 0.3s, color 0.3s;
+            font-size: 1rem;
+        }
+
+        input[type="file"] {
+            margin-bottom: 25px;
+            color: var(--text-color);
+            font-size: 1rem;
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 8px 16px; /* Smaller buttons for theme */
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: background-color 0.3s, transform 0.2s;
+            box-shadow: 0 2px 6px var(--shadow-color);
+        }
+
+        button:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .submit-button {
+            padding: 16px 32px; /* Larger submit button */
+            font-size: 1.1rem;
+        }
+
+        .result {
+            margin-top: 40px;
+            padding: 30px;
+            background-color: var(--result-bg);
+            border-left: 5px solid var(--primary-color);
+            border-radius: 15px;
+            transition: background-color 0.3s;
+            box-shadow: 0 4px 15px var(--shadow-color);
+        }
+
+        .error {
+            color: var(--error-color);
+            margin-bottom: 25px;
+            font-size: 1.1rem;
+            text-align: center;
+        }
+
+        /* Survey Question Sliders */
+        .survey-slider-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .survey-slider {
+            width: 100%;
+            margin-right: 20px;
+        }
+
+        .survey-slider input[type="range"] {
+            width: 100%;
+            -webkit-appearance: none;
+            appearance: none;
+            height: 10px;
+            background: var(--border-color);
+            border-radius: 8px;
+            outline: none;
+            transition: background 0.3s;
+        }
+
+        .survey-slider input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s;
+            box-shadow: 0 2px 8px var(--shadow-color);
+        }
+
+        .survey-slider input[type="range"]::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s;
+            border: none;
+            box-shadow: 0 2px 8px var(--shadow-color);
+        }
+
+        .survey-slider input[type="range"]:hover::-webkit-slider-thumb {
+            background: var(--primary-dark);
+            transform: scale(1.1);
+        }
+
+        .survey-slider input[type="range"]:hover::-moz-range-thumb {
+            background: var(--primary-dark);
+            transform: scale(1.1);
+        }
+
+        .survey-value {
+            width: 40px;
+            text-align: center;
+            font-size: 1.1rem;
+            color: var(--text-color);
+        }
+
+        /* Add a subtle gradient background */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.3));
+            z-index: -1;
+            opacity: 0.4;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+                padding: 20px;
+            }
+
+            form {
+                padding: 30px;
+            }
+
+            input[type="number"],
+            select,
+            input[type="text"] {
+                padding: 12px;
+                margin-bottom: 20px;
+                font-size: 1rem;
+            }
+
+            button {
+                padding: 6px 12px;
+                font-size: 0.7rem;
+            }
+
+            .submit-button {
+                padding: 14px 28px;
+                font-size: 1rem;
+            }
+
+            .survey-slider-container {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .survey-slider {
+                width: 100%;
+                margin-bottom: 15px;
+            }
+
+            .survey-value {
+                width: 35px;
+                font-size: 1rem;
+            }
+
+            .theme-buttons {
+                position: static; /* Reset to flow on mobile */
+                text-align: center;
+                margin-top: 10px;
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>PTSD Assessment (DASS-21)</h1>
+        <div class="theme-buttons">
+            <button onclick="changeTheme('light')">Light</button>
+            <button onclick="changeTheme('dark')">Dark</button>
+            <button onclick="changeTheme('cyberpunk')">Cyberpunk</button>
+        </div>
+
+        {% if error %}
+            <div class="error">Error: {{ error }}</div>
+        {% endif %}
+
+        <form method="post" action="{{ url_for('process') }}" enctype="multipart/form-data">
+            <label for="age">Age:</label>
+            <input type="number" id="age" name="age" min="10" max="100" value="25">
+
+            <label for="gender">Gender:</label>
+            <select id="gender" name="gender">
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+            </select>
+
+            <label for="marital_status">Marital Status:</label>
+            <select id="marital_status" name="marital_status">
+                <option value="Single">Single</option>
+                <option value="Married">Married</option>
+                <option value="Divorced">Divorced</option>
+            </select>
+
+            <label for="education">Education Level:</label>
+            <select id="education" name="education">
+                <option value="High School">High School</option>
+                <option value="Bachelor">Bachelor</option>
+                <option value="Master">Master</option>
+                <option value="PhD">PhD</option>
+            </select>
+
+            <label for="occupation">Occupation:</label>
+            <input type="text" id="occupation" name="occupation" value="Employed">
+
+            <label for="sleeping_problems">Do you have sleeping problems?</label>
+            <select id="sleeping_problems" name="sleeping_problems">
+                <option value="No">No</option>
+                <option value="Yes">Yes</option>
+            </select>
+
+            <h2>Survey Questions (Rate 0 to 3)</h2>
+            {% for i in range(21) %}
+                <label for="q{{ i+1 }}">{{ i+1 }}. {{ dass21_questions[i] }}</label>
+                <div class="survey-slider-container">
+                    <div class="survey-slider">
+                        <input type="range" id="q{{ i+1 }}" name="q{{ i+1 }}" min="0" max="3" value="1" class="survey-range">
+                    </div>
+                    <div class="survey-value">
+                        <span id="q{{ i+1 }}-value">1</span>
+                    </div>
+                </div>
+            {% endfor %}
+
+            <label for="audio_file">Upload an audio file (optional for better accuracy):</label>
+            <input type="file" id="audio_file" name="audio_file">
+
+            <label for="user_input">Additional Context:</label>
+            <input type="text" id="user_input" name="user_input" placeholder="Specific triggers, symptoms, etc.">
+
+            <button type="submit" class="submit-button">Submit and Process</button>
+        </form>
+    </div>
+
+    <script>
+        const html = document.documentElement;
+
+        function changeTheme(theme) {
+            html.setAttribute('data-theme', theme);
+        }
+
+        // Update slider values dynamically
+        const sliders = document.querySelectorAll('.survey-range');
+
+        sliders.forEach(slider => {
+            slider.addEventListener('input', function() {
+                const sliderId = this.id;
+                const valueSpanId = sliderId + '-value';
+                const valueSpan = document.getElementById(valueSpanId);
+                valueSpan.textContent = this.value;
+            });
+        });
+    </script>
+</body>
+</html>
