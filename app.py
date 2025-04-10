@@ -47,7 +47,7 @@ label_mapping = {1: "Normal", 2: "Mild", 3: "Moderate", 4: "Severe", 5: "Extreme
 try:
     groq_llm = ChatGroq(
         temperature=0.3,
-        groq_api_key="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",
+        groq_api_key="Your_Groq_API_Key",
         model_name="llama-3.3-70b-versatile"  # Model for summarization - Use correct model name
     )
 except Exception as e:
@@ -55,7 +55,7 @@ except Exception as e:
     groq_llm = None  # Disable LLM functionality if initialization fails
 
 # Initialize Gemini API
-API_KEY = "AIzaSyDsr0YwjzM6pQMYfFgv0EhDAyQNaXBGXvA"  # Replace with your actual API key - VERY IMPORTANT
+API_KEY = "Your_Gemini_API_Key"  # Replace with your actual API key - VERY IMPORTANT
 gemini_llm = ChatGoogleGenerativeAI(model="gemini-2.0-pro-exp-02-05", api_key=API_KEY, temperature=0.7, top_p=0.9)
 
 # 🌿 PTSD Recovery Chatbot Prompt
